@@ -14,7 +14,12 @@ require 'spec_helper'
 describe User do
 
   before(:each) do
-    @attr = { :name => "Kegan Quimby", :email => "keganquimby@gmail.com" }
+    @attr = { 
+      :name => "Kegan Quimby", 
+      :email => "keganquimby@gmail.com", 
+      :password => "foobar",
+      :password_confirmation => "foobar"
+      }
   end
 
   it "should create a new user given attributes" do
@@ -28,7 +33,7 @@ describe User do
 
   it "should require an email" do
     no_email_user = User.new(@attr.merge(:email => ""))
-    no_name_user.should_not be_valid
+    no_email_user.should_not be_valid
   end
 
   it "should reject names that are too long" do
@@ -49,13 +54,13 @@ describe User do
     addresses = %w[keganquimby@gmail,com kegan_at_gmail.com kegan.quimby@gmail.]
     addresses.each do |address|
       invalid_email_user = User.new(@attr.merge(:email => address))
-      invalid_email_user.should be_valid
+      invalid_email_user.should_not be_valid
     end
   end
 
   it "should reject duplicate emails" do
     User.create!(@attr)
-    duplicate_email_user = User.new!(@attr)
+    duplicate_email_user = User.new(@attr)
     duplicate_email_user.should_not be_valid
   end
 
@@ -64,6 +69,71 @@ describe User do
     User.create!(@attr.merge(:email => upcase_email))
     upcase_email_user = User.new(@attr)
     upcase_email_user.should_not be_valid
-  end    
+  end  
 
+  describe "password validations" do
+    it "should require a password" do
+      blank_password = User.new(@attr.merge(:password => "", :password_confirmation => ""))
+      blank_password.should_not be_valid
+    end
+
+    it "should require matching pw confirmation" do
+      no_match = User.new(@attr.merge(:password_confirmation => "thisdoesntmatch"))
+      no_match.should_not be_valid
+    end
+
+    it "should reject short passwords" do
+      short_pw = "a" * 5
+      short_pw_user = User.new(@attr.merge(:password => short_pw, :password_confirmation => short_pw))
+      short_pw_user.should_not be_valid
+    end
+
+    it "should reject long passwords" do
+      long = "a" * 41
+      long_pw = @attr.merge(:password => long, :password_confirmation => long)
+      User.new(long_pw).should_not be_valid
+    end
+  end  
+
+  describe "password encryption" do
+    before(:each) do
+      @user = User.create!(@attr)
+    end
+
+    it "should have an encrypted password" do
+      @user.should respond_to(:encrypted_password)
+    end
+
+    it "should set the encrypted password" do
+      @user.encrypted_password.should_not be_blank
+    end
+
+    describe "has_password? method" do
+      it "should be true if passwords match" do
+        @user.has_password?(@attr[:password]).should be_true
+      end
+        
+      it "should be false if they dont match" do
+        @user.has_password?("nomatch").should be_false
+      end
+    end
+
+    describe "password authentication" do
+    
+      it "should return nil on mismatch" do
+        mismatch_user = User.authenticate(@attr[:email], "wrongpass")
+        mismatch_user.should be_nil
+      end
+      
+      it "should return nil for an email address with no user" do
+        no_email_user = User.authenticate("noemail@gmail.com", @attr[:password])
+        no_email_user.should be_nil
+      end
+  
+      it "should return user for match" do
+        correct_user = User.authenticate(@attr[:email], @attr[:password])
+        correct_user.should == @user
+      end
+    end
+  end
 end
