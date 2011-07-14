@@ -186,3 +186,11 @@ div.field, div.actions {
   list-style: square;
 }
 
+.flash {
+  background-color: green;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 5px;
+  color: white;
+}
+

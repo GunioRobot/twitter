@@ -20,12 +20,12 @@ describe UsersController do
 
     it "should have the right title" do
       get :show, :id => @user
-      response.should have_selector("title", @user.name)
+      response.should have_selector("title", :content => @user.name)
     end
 
     it "should have the user name" do
       get :show, :id => @user
-      response.should have_selector("h1", @user.name)
+      response.should have_selector("h1", :content => @user.name)
     end
 
     it "should have the right image" do
@@ -47,25 +47,47 @@ describe UsersController do
   end
 
   describe "POST 'create'" do
-    describe failure do 
+    describe "failure" do 
       before(:each) do
-      @attr => { :name => "", :email => "", :password => "", :password_confirmation => "" }
+      @attr = { :name => "", :email => "", :password => "", :password_confirmation => "" }
       end
 
       it "should not create a user" do
       lambda do
-        :post => create, :user => @attr
+        post :create, :user => @attr
       end.should_not change(User, :count)
       end
     
       it "should have the right title" do
-        :post => create, :user => @attr
-        response_should have_selector("title", :content => "Sign Up")
+        post :create, :user => @attr
+        response.should have_selector("title", :content => "Twitter | Sign Up")
       end
 
       it "should render the 'new' page" do
-        :post => create, :user => @attr
-        response_should render_template('new'
+        post :create, :user => @attr
+        response.should render_template('new')
+      end
+    end
+
+    describe "success" do
+      before(:each) do
+        @attr = { :name => "Kegan Quimby", :email => "keganquimby@gmail.com", :password => "foobar", :password_confirmation => "foobar" }
+      end
+
+      it "should create a user"
+        lambda do
+          post :create, :user => @attr
+        end.should change(User, :count).by(1)
+      end
+
+      it "should redirect to show the user" do
+        post :create, :user => @attr
+        response.should redirect_to(user_path(assigns(:user)))
+      end
+      
+      it "should have a welcome message" do
+        post :create, :user => @attr
+        flash[:success].should =~ /welcome to twitter/i
       end
     end
   end
