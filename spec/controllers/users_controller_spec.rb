@@ -88,6 +88,14 @@ describe UsersController do
       get :show, :id => @user
       response.should have_selector("h1>img", :class => "gravatar")
     end
+
+    it "should show the users microposts" do
+      mp1 = Factory(:micropost, :user => @user, :content => "micropost1")
+      mp2 = Factory(:micropost, :user => @user, :content => "micropost2")
+      get :show, :id => @user
+      response.should have_selector("span.content", :content => mp1.content)
+      response.should have_selector("span.content", :content => mp2.content)
+    end
   end
 
   describe "GET 'new'" do
