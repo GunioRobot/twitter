@@ -35,7 +35,7 @@ describe Micropost do
     end
 
     it "should be no more than 140 chars" do
-      @user.microposts.build(:content => "a" * 141).should_not be_valid     
+      @user.microposts.build(:content => "a" * 141).should_not be_valid
     end
   end
 end

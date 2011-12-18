@@ -22,7 +22,7 @@ describe "LayoutLinks" do
       visit root_path
       response.should have_selector("a", :href => signout_path, :content => "Sign out")
     end
-  
+
     it "should have a profile link" do
       visit root_path
       response.should have_selector("a", :href => user_path(@user), :content => "Profile")
@@ -32,7 +32,7 @@ describe "LayoutLinks" do
   it "should have  home page at '/'" do
     get '/'
     response.should have_selector("title", :content => "Home")
-  end 
+  end
 
   it "should have contact page at '/contact'" do
     get '/contact'
@@ -52,6 +52,6 @@ describe "LayoutLinks" do
   it "should have a signup page at /signup" do
     get '/signup'
     response.should have_selector("title", :content => "Sign Up")
-  end 
+  end
 
 end

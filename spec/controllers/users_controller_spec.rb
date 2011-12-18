@@ -103,7 +103,7 @@ describe UsersController do
       get :new
       response.should be_success
     end
-    
+
     it "should have the right title" do
       get :new
       response.should have_selector("title", :content => "Sign Up")
@@ -111,7 +111,7 @@ describe UsersController do
   end
 
   describe "POST 'create'" do
-    describe "failure" do 
+    describe "failure" do
       before(:each) do
       @attr = { :name => "", :email => "", :password => "", :password_confirmation => "" }
       end
@@ -121,7 +121,7 @@ describe UsersController do
         post :create, :user => @attr
       end.should_not change(User, :count)
       end
-    
+
       it "should have the right title" do
         post :create, :user => @attr
         response.should have_selector("title", :content => "Twitter | Sign Up")
@@ -148,7 +148,7 @@ describe UsersController do
         post :create, :user => @attr
         response.should redirect_to(user_path(assigns(:user)))
       end
-      
+
       it "should have a welcome message" do
         post :create, :user => @attr
         flash[:success].should =~ /welcome to twitter/i
@@ -210,7 +210,7 @@ describe UsersController do
       before(:each) do
         @attr = { :name => "NewName", :email => "NewName@gmail.com", :password => "foobar", :password_confirmation => "foobar" }
       end
-  
+
       it "should change the users attributes" do
         put :update, :id => @user, :user => @attr
         @user.reload

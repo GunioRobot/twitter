@@ -21,7 +21,7 @@ describe SessionsController do
       before(:each) do
         @attr = { :email => "kquimby@gmail.com", :password => "thiscantberight" }
       end
-  
+
       it "should re-render the new page" do
         post :create, :session => @attr
         response.should render_template('new')

@@ -12,7 +12,7 @@ describe MicropostsController do
     it "should deny access to destroy" do
       delete :destroy, :id => 1
       response.should redirect_to(signin_path)
-    end    
+    end
   end
 
   describe "post 'CREATE'" do
@@ -85,7 +85,7 @@ describe MicropostsController do
       end
 
       it "should destroy the micropost" do
-        lambda do 
+        lambda do
           delete :destroy, :id => @micropost
         end.should change(Micropost, :count).by(-1)
       end
